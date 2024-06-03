@@ -1,7 +1,9 @@
-import { Container, Heading, VStack, Box, Text, Image, HStack, IconButton } from "@chakra-ui/react";
+import { Container, Heading, VStack, Box, Text, Image, HStack, IconButton, Button, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from "@chakra-ui/react";
+import { useState } from "react";
+import NewPostForm from "../components/NewPostForm";
 import { FaTwitter, FaFacebook, FaLinkedin } from "react-icons/fa";
 
-const posts = [
+const initialPosts = [
   {
     id: 1,
     title: "Understanding React Hooks",
@@ -29,11 +31,20 @@ const posts = [
 ];
 
 const Index = () => {
+  const [posts, setPosts] = useState(initialPosts);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const addPost = (post) => {
+    setPosts([...posts, { ...post, id: posts.length + 1 }]);
+  };
   return (
     <Container maxW="container.lg" py={8}>
       <Heading as="h1" mb={8} textAlign="center">
         My Tech Blog
       </Heading>
+      <Button onClick={onOpen} colorScheme="teal" mb={4}>
+        Add New Post
+      </Button>
       <VStack spacing={8}>
         {posts.map((post) => (
           <Box key={post.id} borderWidth="1px" borderRadius="lg" overflow="hidden" w="100%">
@@ -57,6 +68,19 @@ const Index = () => {
           </Box>
         ))}
       </VStack>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add New Post</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <NewPostForm addPost={addPost} />
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>Close</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Container>
   );
 };
